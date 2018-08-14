@@ -1,0 +1,29 @@
+# BGP neighbors
+  neighbors:
+    -  ip_address: '192.168.2.4'
+       remote_as: 65002
+       weight: 110
+       hold_down_timer: 15
+       keep_alive_timer: 5
+    -  ip_address: '192.168.2.5'
+       remote_as: 65002
+    -  ip_address: '192.168.2.7'
+       remote_as: 65003
+       filters:
+         - direction: 'in'
+           action: 'permit'
+           network: '7.7.7.0/24'
+         - direction: 'in'
+           action: 'permit'
+           network: '8.8.8.0/24'
+    -  ip_address: '192.168.2.8'
+       remote_as: 65002
+       weight: 120
+       hold_down_timer: 15
+       keep_alive_timer: 5
+    -  ip_address: '192.168.2.9'
+       remote_as: 65003
+       filters:
+         - direction: 'in'
+           action: 'permit'
+           network: '9.9.9.0/24'
