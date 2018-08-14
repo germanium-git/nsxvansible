@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_files:
+     - answerfile.yml
+     - neighbors.yml
+  tasks:
+  - name: Configure BGP ESG
+    nsx_bgp:
+      nsxmanager_spec: "{{ nsxmanager_spec }}"
+      state: present
+      edge_name: 'MYEDGE-NAME'
+      router_id: '192.168.1.2'
+      local_as: 64634
+      # default_originate: True
+      # graceful_restart: False
+      neighbours: "{{ neighbors }}"
+    register: bgp_esg
+    tags: bgp_esg
