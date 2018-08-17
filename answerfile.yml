@@ -3,4 +3,4 @@ nsxmanager_spec:
   raml_file: '/...path to /nsxraml/nsxvapi.raml'
   host: "11.22.33.44"
   user: 'admin'
-  password: "labuser"
+  password: "passw"

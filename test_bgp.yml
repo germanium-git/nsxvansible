@@ -10,7 +10,7 @@
     nsx_bgp:
       nsxmanager_spec: "{{ nsxmanager_spec }}"
       state: present
-      edge_name: 'MYEDGE-NAME'
+      edge_name: 'MyEDGE-NAME'
       router_id: '192.168.1.2'
       local_as: 64634
       # default_originate: True

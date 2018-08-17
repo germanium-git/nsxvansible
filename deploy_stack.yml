@@ -1,0 +1,72 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    esg_networks:
+      uplink: {name: 'uplink', ip: '10.114.209.94', prefix_len: 27, portgroup_id: "{{ gather_moids_upl_pg.object_id }}", iftype: 'uplink'}
+      transit_net: {name: 'transit_net', ip: '172.16.1.1', prefix_len: 24, logical_switch: 'transit_net', iftype: 'internal'}
+  vars_files:
+     - answerfile.yml
+     - vcenter_vault.yml
+     - stack_parameters.yml
+     - neighbors.yml
+
+
+  tasks:
+  - name: gather moid for datastore
+    vcenter_gather_moids_custom:
+      hostname: "{{ vcenter }}"
+      username: "{{ vcenter_user }}"
+      password: "{{ vcenter_pwd }}"
+      datacenter_name: "{{ vcenter_dc }}"
+      datastore_name: "{{ vcenter_datastore }}"
+      validate_certs: False
+    register: gather_moids_ds
+    tags: moids
+
+  - name: Create vlan portgroup with all security and port policies
+    vmware_dvs_portgroup_custom:
+     hostname: "{{ vcenter }}"
+     username: "{{ vcenter_user }}"
+     password: "{{ vcenter_pwd }}"
+     validate_certs: false
+     portgroup_name: "{{ portgr_uplink }}"
+     switch_name: "{{ dvswitch_name }}"
+     vlan_id: "{{ vlan }}"
+     num_ports: 8
+     act_links: "{{ active_uplinks }}"
+     portgroup_type: earlyBinding
+     state: present
+     network_policy:
+       promiscuous: no
+       forged_transmits: yes
+       mac_changes: yes
+
+  - name: gather moid for uplink vnic
+    vcenter_gather_moids_custom:
+      hostname: "{{ vcenter }}"
+      username: "{{ vcenter_user }}"
+      password: "{{ vcenter_pwd }}"
+      datacenter_name: "{{ vcenter_dc }}"
+      portgroup_name: "{{ portgr_uplink }}"
+      validate_certs: False
+    register: gather_moids_upl_pg
+    tags: moids
+
+  - name: gather moid for cluster
+    vcenter_gather_moids_custom:
+      hostname: "{{ vcenter }}"
+      username: "{{ vcenter_user }}"
+      password: "{{ vcenter_pwd }}"
+      datacenter_name: "{{ vcenter_dc }}"
+      cluster_name: "{{ vcenter_edge_cluster }}"
+      validate_certs: False
+    register: gather_moids_cl
+    tags: moids
+
+  - debug:
+      msg:
+        - "Datastore moids: {{ vcenter_datastore }} {{ gather_moids_ds.object_id }}"
+        - "Cluster moids: {{ vcenter_edge_cluster }} {{ gather_moids_cl.object_id }}"
+        - "Portgroup moids: {{ portgr_uplink }} {{ gather_moids_upl_pg.object_id }}"

@@ -1,0 +1,10 @@
+---
+vcenter_dc: dcname
+vcenter_datastore: storage
+vcenter_edge_cluster: cluster
+portgr_uplink: portgroupname
+dvswitch_name: dvswitchname
+vlan: 123
+active_uplinks:
+  - uplink1
+  - uplink2
